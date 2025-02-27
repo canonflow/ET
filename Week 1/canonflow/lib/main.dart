@@ -1,3 +1,8 @@
+import 'package:canonflow/screen/about.dart';
+import 'package:canonflow/screen/basket.dart';
+import 'package:canonflow/screen/history.dart';
+import 'package:canonflow/screen/home.dart';
+import 'package:canonflow/screen/search.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -31,6 +36,10 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      routes: {
+        'about': (context) => const About(),
+        'basket': (context) => const Basket(),
+      },
     );
   }
 }
@@ -58,6 +67,15 @@ class _MyHomePageState extends State<MyHomePage> {
   String smile = String.fromCharCodes(Runes('\u{1F60B}'));
   String angry = String.fromCharCodes(Runes('\u{1F621}'));
   String emo = "";
+
+  // Week 2
+  int _currentIndex = 0;
+  final List<Widget> _screens = [
+    Home(),
+    Search(),
+    History()
+  ];
+  final List<String> _title = ['Home', 'Search', 'History'];
 
   void _incrementCounter() {
     setState(() {
@@ -87,41 +105,120 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: Text(_title[_currentIndex]),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            Text(emo)
-          ],
-        ),
-      ),
+      // body: Center(
+      //   // Center is a layout widget. It takes a single child and positions it
+      //   // in the middle of the parent.
+      //   child: Column(
+      //     // Column is also a layout widget. It takes a list of children and
+      //     // arranges them vertically. By default, it sizes itself to fit its
+      //     // children horizontally, and tries to be as tall as its parent.
+      //     //
+      //     // Column has various properties to control how it sizes itself and
+      //     // how it positions its children. Here we use mainAxisAlignment to
+      //     // center the children vertically; the main axis here is the vertical
+      //     // axis because Columns are vertical (the cross axis would be
+      //     // horizontal).
+      //     //
+      //     // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
+      //     // action in the IDE, or press "p" in the console), to see the
+      //     // wireframe for each widget.
+      //     mainAxisAlignment: MainAxisAlignment.center,
+      //     children: <Widget>[
+      //       const Text('You have pushed the button this many times:'),
+      //       Text(
+      //         '$_counter',
+      //         style: Theme.of(context).textTheme.headlineMedium,
+      //       ),
+      //       Text(emo)
+      //     ],
+      //   ),
+      // ),
+      body: _screens[_currentIndex],
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
+      drawer:  myDrawer(),
+      persistentFooterButtons: myPFB,
+      bottomNavigationBar: myBottomNav(),
+    );
+  }
+
+  BottomNavigationBar myBottomNav() {
+    return BottomNavigationBar(
+      currentIndex: _currentIndex,
+      fixedColor: Colors.teal,
+      items: [
+        BottomNavigationBarItem(
+          label: "Home",
+          icon: Icon(Icons.home)
+        ),
+        BottomNavigationBarItem(
+          label: "Search",
+          icon: Icon(Icons.search)
+        ),
+        BottomNavigationBarItem(
+          label: "History",
+          icon: Icon(Icons.history)
+        )
+      ],
+      onTap: (int index) {
+        setState(() {
+          _currentIndex = index;
+        });
+      },
+    );
+  }
+
+  List<Widget> get myPFB {
+    return <Widget>[
+      ElevatedButton(
+        onPressed: () {}, 
+        child: const Icon(Icons.skip_previous),
+      ),
+      ElevatedButton(
+        onPressed: () {}, 
+        child: const Icon(Icons.skip_next)
+      )
+    ];
+  }
+
+  Drawer myDrawer() {
+    return Drawer(
+      elevation: 16.0,
+      child: Column(
+        children: <Widget>[
+          const UserAccountsDrawerHeader(
+            accountName: Text("xyz"),
+            accountEmail: Text("xyz@gmail.com"),
+            currentAccountPicture: CircleAvatar(
+                backgroundImage: NetworkImage("https://i.pravatar.cc/150")
+            )
+          ),
+          ListTile(
+            title:  const Text("Inbox"),
+            leading:  const Icon(Icons.inbox),
+            onTap: () {}
+          ),
+          ListTile(
+            title:  const Text("My Basket"),
+            leading:  const Icon(Icons.shopping_basket),
+            onTap: () {
+              Navigator.popAndPushNamed(context, "basket");
+            }
+          ),
+          ListTile(
+            title: const Text("About"),
+            leading: const Icon(Icons.help),
+            onTap: () {
+              Navigator.popAndPushNamed(context, "about");
+            },
+          ),
+        ],
+      ),
     );
   }
 }
