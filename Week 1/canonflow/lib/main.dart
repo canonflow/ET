@@ -3,6 +3,7 @@ import 'package:canonflow/screen/basket.dart';
 import 'package:canonflow/screen/history.dart';
 import 'package:canonflow/screen/home.dart';
 import 'package:canonflow/screen/search.dart';
+import 'package:canonflow/screen/student/student-list.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
       routes: {
         'about': (context) => const About(),
         'basket': (context) => const Basket(),
+        'student.list': (context) => StudentList(),
       },
     );
   }
@@ -215,6 +217,13 @@ class _MyHomePageState extends State<MyHomePage> {
             leading: const Icon(Icons.help),
             onTap: () {
               Navigator.popAndPushNamed(context, "about");
+            },
+          ),
+          ListTile(
+            title: const Text("Student List"),
+            leading: const Icon(Icons.list),
+            onTap: () {
+              Navigator.popAndPushNamed(context, "student.list");
             },
           ),
         ],
