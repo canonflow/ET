@@ -3,6 +3,7 @@ import 'package:canonflow/screen/basket.dart';
 import 'package:canonflow/screen/history.dart';
 import 'package:canonflow/screen/home.dart';
 import 'package:canonflow/screen/search.dart';
+import 'package:canonflow/screen/student/addrecipe.dart';
 import 'package:canonflow/screen/student/student-list.dart';
 import 'package:flutter/material.dart';
 
@@ -39,8 +40,9 @@ class MyApp extends StatelessWidget {
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
       routes: {
         'about': (context) => const About(),
-        'basket': (context) => const Basket(),
+        'basket': (context) =>const Basket(),
         'student.list': (context) => StudentList(),
+        'add.recipe': (context) => const AddRecipe(),
       },
     );
   }
