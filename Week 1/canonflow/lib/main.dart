@@ -2,6 +2,7 @@ import 'package:canonflow/screen/about.dart';
 import 'package:canonflow/screen/basket.dart';
 import 'package:canonflow/screen/history.dart';
 import 'package:canonflow/screen/home.dart';
+import 'package:canonflow/screen/quiz.dart';
 import 'package:canonflow/screen/search.dart';
 import 'package:canonflow/screen/student/addrecipe.dart';
 import 'package:canonflow/screen/student/student-list.dart';
@@ -43,6 +44,7 @@ class MyApp extends StatelessWidget {
         'basket': (context) =>const Basket(),
         'student.list': (context) => StudentList(),
         'add.recipe': (context) => const AddRecipe(),
+        'quiz': (context) => const Quiz(),
       },
     );
   }
@@ -226,6 +228,13 @@ class _MyHomePageState extends State<MyHomePage> {
             leading: const Icon(Icons.list),
             onTap: () {
               Navigator.popAndPushNamed(context, "student.list");
+            },
+          ),
+          ListTile(
+            title: const Text("Quiz"),
+            leading: const Icon(Icons.access_alarm),
+            onTap: () {
+              Navigator.popAndPushNamed(context, "quiz");
             },
           ),
         ],
