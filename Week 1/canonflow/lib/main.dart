@@ -1,15 +1,38 @@
 import 'package:canonflow/screen/about.dart';
 import 'package:canonflow/screen/basket.dart';
+import 'package:canonflow/screen/highscore.dart';
 import 'package:canonflow/screen/history.dart';
 import 'package:canonflow/screen/home.dart';
+import 'package:canonflow/screen/login.dart';
 import 'package:canonflow/screen/quiz.dart';
 import 'package:canonflow/screen/search.dart';
 import 'package:canonflow/screen/student/addrecipe.dart';
 import 'package:canonflow/screen/student/student-list.dart';
 import 'package:flutter/material.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
+String ACTIVE_USER = "";
+
+Future<String> checkUser() async {
+  final prefs = await SharedPreferences.getInstance();
+  String user_id = prefs.getString("user_id") ?? "";
+
+  return user_id;
+}
+
 void main() {
-  runApp(const MyApp());
+  // runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  checkUser()
+    .then((String result) {
+      if (result == "") {
+        runApp(const MyLogin());
+      } else {
+        ACTIVE_USER = result;
+        runApp(const MyApp());
+      }
+    });
 }
 
 class MyApp extends StatelessWidget {
@@ -45,6 +68,8 @@ class MyApp extends StatelessWidget {
         'student.list': (context) => StudentList(),
         'add.recipe': (context) => const AddRecipe(),
         'quiz': (context) => const Quiz(),
+        'login': (context) => const Login(),
+        'highscore': (context) => HighScore(),
       },
     );
   }
@@ -76,12 +101,28 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // Week 2
   int _currentIndex = 0;
+
+  // Week 6
+  String _user_id = "";
+
   final List<Widget> _screens = [
     Home(),
     Search(),
     History()
   ];
   final List<String> _title = ['Home', 'Search', 'History'];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    checkUser()
+      .then((value) {
+        setState(() {
+          _user_id = value;
+        });
+      });
+  }
 
   void _incrementCounter() {
     setState(() {
@@ -93,6 +134,12 @@ class _MyHomePageState extends State<MyHomePage> {
       _counter++;
       emo += (_counter % 5 == 0) ? angry : smile;
     });
+  }
+
+  void doLogout() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.remove('user_id');
+    main();
   }
 
   @override
@@ -197,9 +244,9 @@ class _MyHomePageState extends State<MyHomePage> {
       elevation: 16.0,
       child: Column(
         children: <Widget>[
-          const UserAccountsDrawerHeader(
+          UserAccountsDrawerHeader(
             accountName: Text("xyz"),
-            accountEmail: Text("xyz@gmail.com"),
+            accountEmail: Text(_user_id),
             currentAccountPicture: CircleAvatar(
                 backgroundImage: NetworkImage("https://i.pravatar.cc/150")
             )
@@ -235,6 +282,32 @@ class _MyHomePageState extends State<MyHomePage> {
             leading: const Icon(Icons.access_alarm),
             onTap: () {
               Navigator.popAndPushNamed(context, "quiz");
+            },
+          ),
+          ListTile(
+            title: const Text(
+              "HIGHSCORE",
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                color: Colors.greenAccent
+              ),
+            ),
+            leading: const Icon(Icons.sports_score_rounded),
+            onTap: () {
+              Navigator.pushNamed(context, 'highscore');
+            },
+          ),
+          ListTile(
+            title: const Text(
+              "LOGOUT",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.red
+              ),
+            ),
+            leading: const Icon(Icons.logout_rounded),
+            onTap: () {
+              doLogout();
             },
           ),
         ],

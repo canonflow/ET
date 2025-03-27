@@ -1,8 +1,10 @@
+import 'package:canonflow/main.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:canonflow/class/question.dart' as question_class;
 
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Quiz extends StatefulWidget {
   const Quiz({super.key});
@@ -37,17 +39,30 @@ class _QuizState extends State<Quiz> {
   }
 
   void endGame() {
-    setState(() {
+    setState(() async {
       _timer.cancel();
       _hitung = 0;
       isEnd = true;
+      int currPoint = question_class.point;
+      final prefs = await SharedPreferences.getInstance();
+      int? highscore = prefs.getInt("TOP_POINT");
+
+      // Kalo null
+      if (highscore == null) {
+        prefs.setInt("TOP_POINT", currPoint);
+        prefs.setString("TOP_USER", ACTIVE_USER);
+      } else if (currPoint > highscore) {
+        prefs.setInt("TOP_POINT", currPoint);
+        prefs.setString("TOP_USER", ACTIVE_USER);
+      }
+      
       // question_class.question_no = 0;  // Reset the number
       // question_class.point = 0;
       showDialog(
         context: context, 
         builder: (BuildContext context) => AlertDialog(
           title: Text("Quiz"),
-          content: Text("Quiz Ended.\nYour point is ${question_class.point}"),
+          content: Text("Quiz Ended.\nYour point is $currPoint"),
           actions: <Widget>[
             TextButton(
               onPressed: () => Navigator.pop(context, 'OK'), 
@@ -135,7 +150,7 @@ class _QuizState extends State<Quiz> {
 
   @override
   Widget build(BuildContext context) {
-        return Scaffold(
+    return Scaffold(
       appBar: AppBar(
         title: const Text('Quiz'),
       ),
@@ -150,8 +165,8 @@ class _QuizState extends State<Quiz> {
               //   )
               // ),
               Text("Number: ${question_class.question_no + 1}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-              SizedBox(height: 6),
-              Text("Point: ${question_class.point}"),
+              // SizedBox(height: 6),
+              // Text("Point: ${question_class.point}"),
               SizedBox(height: 6),
               CircularPercentIndicator(
                 radius: 120.0,
