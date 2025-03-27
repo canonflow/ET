@@ -40,6 +40,7 @@ class _QuizState extends State<Quiz> {
     setState(() {
       _timer.cancel();
       _hitung = 0;
+      isEnd = true;
       // question_class.question_no = 0;  // Reset the number
       // question_class.point = 0;
       showDialog(
@@ -106,7 +107,6 @@ class _QuizState extends State<Quiz> {
 
       if (question_class.question_no == question_class.maxQuestionNo - 1) {
         endGame();
-        isEnd = true;
       } else {
         _hitung = _initValue;
         question_class.question_no++;
