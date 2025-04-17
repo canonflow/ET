@@ -1,4 +1,5 @@
 import 'package:canonflow/screen/about.dart';
+import 'package:canonflow/screen/animation.dart';
 import 'package:canonflow/screen/basket.dart';
 import 'package:canonflow/screen/highscore.dart';
 import 'package:canonflow/screen/history.dart';
@@ -70,6 +71,7 @@ class MyApp extends StatelessWidget {
         'quiz': (context) => const Quiz(),
         'login': (context) => const Login(),
         'highscore': (context) => HighScore(),
+        'animation': (context) => Animasi(),
       },
     );
   }
@@ -308,6 +310,19 @@ class _MyHomePageState extends State<MyHomePage> {
             leading: const Icon(Icons.logout_rounded),
             onTap: () {
               doLogout();
+            },
+          ),
+          ListTile(
+            title: const Text(
+              "Animasi",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.red
+              ),
+            ),
+            leading: const Icon(Icons.access_time),
+            onTap: () {
+              Navigator.pushNamed(context, "animation");
             },
           ),
         ],
