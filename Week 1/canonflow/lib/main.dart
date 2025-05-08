@@ -5,6 +5,8 @@ import 'package:canonflow/screen/highscore.dart';
 import 'package:canonflow/screen/history.dart';
 import 'package:canonflow/screen/home.dart';
 import 'package:canonflow/screen/login.dart';
+import 'package:canonflow/screen/popular-actor.dart';
+import 'package:canonflow/screen/popular-movie.dart';
 import 'package:canonflow/screen/quiz.dart';
 import 'package:canonflow/screen/search.dart';
 import 'package:canonflow/screen/student/addrecipe.dart';
@@ -72,6 +74,8 @@ class MyApp extends StatelessWidget {
         'login': (context) => const Login(),
         'highscore': (context) => HighScore(),
         'animation': (context) => Animasi(),
+        'popular-movie': (context) => PopularMovie(),
+        'popular-actor': (context) => PopularActor()
       },
     );
   }
@@ -323,6 +327,30 @@ class _MyHomePageState extends State<MyHomePage> {
             leading: const Icon(Icons.access_time),
             onTap: () {
               Navigator.pushNamed(context, "animation");
+            },
+          ),
+          ListTile(
+            title: const Text(
+              "Popular Movie",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            leading: const Icon(Icons.movie),
+            onTap: () {
+              Navigator.pushNamed(context, "popular-movie");
+            },
+          ),
+          ListTile(
+            title: const Text(
+              "Popular Actor",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            leading: const Icon(Icons.person),
+            onTap: () {
+              Navigator.pushNamed(context, "popular-actor");
             },
           ),
         ],
