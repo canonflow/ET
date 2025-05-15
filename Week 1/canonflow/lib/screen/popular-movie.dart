@@ -1,9 +1,12 @@
 import 'dart:convert';
 
 import 'package:canonflow/class/popmovie.dart';
+import 'package:canonflow/screen/detailpop.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+
+String _txtcari = "";
 
 class PopularMovie extends StatefulWidget {
   const PopularMovie({super.key});
@@ -16,8 +19,15 @@ class PopularMovie extends StatefulWidget {
 
 String _temp = 'waiting API respond…';
  Future<String> fetchData() async {
+  // final response = await http
+  //   .get(Uri.parse("https://ubaya.xyz/flutter/160422041/movielist.php"));
   final response = await http
-    .get(Uri.parse("https://ubaya.xyz/flutter/160422041/movielist.php"));
+    .post(
+      Uri.parse("https://ubaya.xyz/flutter/160422041/movielist.php"),
+      body: {
+        'cari': _txtcari
+      }
+    );
   if (response.statusCode == 200) {
    return response.body;
   } else {
@@ -34,13 +44,16 @@ class _PopularMovieState extends State<PopularMovie> {
     Future<String> data = fetchData();
     data.then((val) {
       Map json = jsonDecode(val);
-      for (var mov in json['data']) {
-        PopMovie pm = PopMovie.fromJson(mov);
-        PMs.add(pm);
+      if (json['result'] == "success") {
+        for (var mov in json['data']) {
+          PopMovie pm = PopMovie.fromJson(mov);
+          PMs.add(pm);
+        }
+      } else {
+        PMs.clear();
       }
 
       setState(() {
-        _temp = PMs[2].overview;
       });
     });
   }
@@ -61,9 +74,21 @@ class _PopularMovieState extends State<PopularMovie> {
       body: ListView(
         children:  <Widget>[
           // Text(_temp)
+          TextFormField(
+            decoration: const InputDecoration(
+              icon: Icon(Icons.search),
+              labelText: 'Judul mengandung kata:',
+            ),
+            onFieldSubmitted: (value) {
+              _txtcari = value;
+              PMs.clear();
+              bacaData();
+            },
+          ),
+          SizedBox(height: 10),
           Container(
             height: MediaQuery.of(context).size.height - 200,
-            child: DaftarPopMovie(PMs),
+            child: PMs.length > 0 ? DaftarPopMovie(PMs) : Text('Tidak ada data'),
           )
         ]
       )
@@ -99,14 +124,24 @@ class _PopularMovieState extends State<PopularMovie> {
                     ),
                     // Image.network(recipe.recipes[i].photo),
                     const SizedBox(height: 12),
-                    Text(
-                      popMovs[index].title,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: const Color.fromARGB(255, 53, 72, 82)
+                    GestureDetector(
+                      child: Text(
+                        popMovs[index].title,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color: const Color.fromARGB(255, 53, 72, 82)
+                        ),
                       ),
-                    ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                DetailPop(movieID: PMs[index].id),
+                          ),
+                        );
+                      }),
                     const SizedBox(height: 14),
                     Text(
                       popMovs[index].overview,
@@ -117,7 +152,17 @@ class _PopularMovieState extends State<PopularMovie> {
                 )
                 : ListTile(
                     leading: const Icon(Icons.movie, size: 30),
-                    title: Text(popMovs[index].title),
+                    title: GestureDetector(
+                      child: Text(PMs[index].title),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                DetailPop(movieID: PMs[index].id),
+                          ),
+                        );
+                      }),
                     subtitle: Text(popMovs[index].overview),
                   ),
 

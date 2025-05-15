@@ -1,6 +1,8 @@
 import 'package:canonflow/main.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class MyLogin extends StatelessWidget {
   const MyLogin({ super.key });
@@ -30,13 +32,34 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
 
   String _user_id = "";
+  String _user_password = "";
+  String _error_login = "";
 
   void doLogin() async {
-    if (_user_id != "") {
-      final prefs = await SharedPreferences.getInstance();
-      prefs.setString("user_id", _user_id);
-      main();
+    // if (_user_id != "") {
+    //   final prefs = await SharedPreferences.getInstance();
+    //   prefs.setString("user_id", _user_id);
+    //   main();
+    // }
+    final response = await http.post(
+        Uri.parse("https://ubaya.xyz/flutter/160422041/login.php"),
+        body: {'user_id': _user_id, 'user_password': _user_password});
+    if (response.statusCode == 200) {
+      Map json = jsonDecode(response.body);
+      if (json['result'] == 'success') {
+        final prefs = await SharedPreferences.getInstance();
+        prefs.setString("user_id", _user_id);
+        prefs.setString("user_name", json['user_name']);
+        main();
+      } else {
+        setState(() {
+          _error_login = "Incorrect user or password";
+        });
+      }
+    } else {
+      throw Exception('Failed to read API');
     }
+
   }
 
   @override
@@ -46,7 +69,7 @@ class _LoginState extends State<Login> {
         title: Text("Login")
       ),
       body: Container(
-        height: 300,
+        height: 400,
         margin: EdgeInsets.all(20),
         padding: EdgeInsets.all(20),
         decoration: BoxDecoration(
@@ -81,6 +104,9 @@ class _LoginState extends State<Login> {
                   labelText: "Password",
                   hintText: "Enter secure password"
                 ),
+                onChanged: (v) {
+                  _user_password = v;
+                },
               )
             ),
             // Padding(
@@ -96,6 +122,13 @@ class _LoginState extends State<Login> {
             //     },
             //   ),
             // ),
+            (_error_login != "") ?
+            Padding(
+              padding: EdgeInsets.all(10),
+              child: Text(_error_login, style: TextStyle(color: Colors.red)),
+            ) :
+            Padding(padding: EdgeInsets.all(0)),
+
             Padding(
               padding: EdgeInsets.all(10),
               child: Container(
