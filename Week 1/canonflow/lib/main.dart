@@ -5,6 +5,7 @@ import 'package:canonflow/screen/highscore.dart';
 import 'package:canonflow/screen/history.dart';
 import 'package:canonflow/screen/home.dart';
 import 'package:canonflow/screen/login.dart';
+import 'package:canonflow/screen/newpopmovie.dart';
 import 'package:canonflow/screen/popular-actor.dart';
 import 'package:canonflow/screen/popular-movie.dart';
 import 'package:canonflow/screen/quiz.dart';
@@ -75,7 +76,8 @@ class MyApp extends StatelessWidget {
         'highscore': (context) => HighScore(),
         'animation': (context) => Animasi(),
         'popular-movie': (context) => PopularMovie(),
-        'popular-actor': (context) => PopularActor()
+        'popular-actor': (context) => PopularActor(),
+        'popular-movie-add': (context) => NewPopMovie(),
       },
     );
   }
@@ -351,6 +353,18 @@ class _MyHomePageState extends State<MyHomePage> {
             leading: const Icon(Icons.person),
             onTap: () {
               Navigator.pushNamed(context, "popular-actor");
+            },
+          ),
+          ListTile(
+            title: const Text(
+              "New Popular Movie",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            leading: const Icon(Icons.add),
+            onTap: () {
+              Navigator.pushNamed(context, "popular-movie-add");
             },
           ),
         ],

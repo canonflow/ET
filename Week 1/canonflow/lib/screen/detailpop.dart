@@ -1,5 +1,6 @@
 import 'package:canonflow/class/popmovie.dart';
 import 'package:canonflow/main.dart';
+import 'package:canonflow/screen/popular-movie.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -34,6 +35,42 @@ class _DetailPopState extends State<DetailPop> {
       _pm = PopMovie.fromJson(json['data']);
       setState(() {});
     });
+  }
+
+  deleteMovie() async {
+    final response = await http
+      .post(
+        Uri.parse("https://ubaya.xyz/flutter/160422041/deletemovie.php"),
+        body: {
+          'movie_id': widget.movieID.toString()
+        }
+      );
+
+      if (response.statusCode == 200) {
+        Map json = jsonDecode(response.body);
+        if (json['result'] == 'success') {
+          if (!mounted) return;
+
+          ScaffoldMessenger
+            .of(context)
+            .showSnackBar(SnackBar(
+              content: Text("Sukses menghapus data!")
+            ));
+
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const MyHomePage(title: "Flutter Demo")), // replace with your actual screen widget
+            (route) => false, // remove all previous routes
+          );
+        } else {
+          ScaffoldMessenger
+            .of(context)
+            .showSnackBar(SnackBar(
+              content: Text("Gagal menghapus data!")
+            ));
+          throw Exception("Failed to read API!");
+        }
+      }
   }
 
 
@@ -79,6 +116,18 @@ class _DetailPopState extends State<DetailPop> {
                 return Text(_pm?.casts?[index]);
               }
             )
+          ),
+
+          SizedBox(height: 10),
+
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: ElevatedButton(
+              onPressed: () {
+                deleteMovie();
+              },
+              child: Text('Hapus'),
+            ),
           ),
         ]
       )

@@ -91,8 +91,28 @@ class _PopularMovieState extends State<PopularMovie> {
             child: PMs.length > 0 ? DaftarPopMovie(PMs) : Text('Tidak ada data'),
           )
         ]
-      )
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, "popular-movie-add");
+        },
+        tooltip: 'Add',
+        child: const Icon(Icons.add),
+      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  List<Widget> get myPFB {
+    return <Widget>[
+      ElevatedButton(
+        onPressed: () {}, 
+        child: const Icon(Icons.skip_previous),
+      ),
+      ElevatedButton(
+        onPressed: () {}, 
+        child: const Icon(Icons.skip_next)
+      )
+    ];
   }
 
   Widget DaftarPopMovie(popMovs) {
