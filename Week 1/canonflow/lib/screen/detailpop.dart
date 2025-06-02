@@ -6,6 +6,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'editpopmovie.dart';
+
 
 class DetailPop extends StatefulWidget {
   int movieID;
@@ -119,6 +121,24 @@ class _DetailPopState extends State<DetailPop> {
           ),
 
           SizedBox(height: 10),
+
+          Padding(
+            padding: EdgeInsets.all(10),
+            child: ElevatedButton(
+              child: Text('Edit'),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        EditPopMovie(movieID: widget.movieID),
+                  ),
+                );
+              },
+            )
+          ),
+
+          SizedBox(height: 5),
 
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),

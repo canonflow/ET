@@ -2,6 +2,9 @@ class PopMovie {
   int id;
   String title;
   String overview;
+  String? homepage;
+  String? release_date;
+  int? runtime;
   String voteAverage;
   String url;
   List? genres;
@@ -10,11 +13,14 @@ class PopMovie {
  PopMovie({
   required this.id, 
   required this.title, 
-  required this.overview, 
+  required this.overview,
   required this.voteAverage, 
   required this.url,
   this.genres,
-  this.casts
+  this.casts,
+  this.homepage,
+  this.release_date,
+  this.runtime
 });
 
  factory PopMovie.fromJson(Map<String, dynamic> json) {
@@ -25,7 +31,10 @@ class PopMovie {
    voteAverage: json['vote_average'] != null ? json['vote_average'].toString() : '0.0',
    url: json["url"] != null ? json["url"].toString() : "",
    genres: json['genres'],
-   casts: json['casts']
+   casts: json['casts'],
+   homepage: json['homepage'],
+   release_date: json['release_date'],
+   runtime: json['runtime'] as int
   );
  }
 }
