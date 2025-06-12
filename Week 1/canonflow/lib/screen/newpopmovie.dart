@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:canonflow/class/popmovie.dart';
 import 'package:canonflow/main.dart';
 import 'package:flutter/material.dart';

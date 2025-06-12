@@ -75,6 +75,30 @@ class _DetailPopState extends State<DetailPop> {
       }
   }
 
+  deleteScene(String scenePath) async {
+    final response = await http.post(
+      Uri.parse("https://ubaya.xyz/flutter/160422041/deletescene.php"),
+      body: {
+        'scene_path': scenePath
+      },
+    );
+    if (response.statusCode == 200) {
+      Map json = jsonDecode(response.body);
+      print('DELETE request scene_path: $scenePath');
+      print(json.toString());
+      if (json['result'] == 'success') {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Sukses menghapus Scene')));
+        setState(() {
+          bacaData();
+        });
+      }
+    } else {
+      throw Exception('Failed to read API');
+    }
+  }
+
 
   PopMovie? _pm;
 
@@ -119,6 +143,50 @@ class _DetailPopState extends State<DetailPop> {
               }
             )
           ),
+
+          SizedBox(height: 10),
+
+          if(_pm != null)
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: _pm!.scenes!.length,
+                itemBuilder: (BuildContext ctxt, int index) {
+                  // return Image.network("https://ubaya.xyz/flutter/160422041/"+_pm?.scenes?[index]);
+                  return Card(
+                    child: Container(
+                      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+                      margin: EdgeInsets.symmetric(vertical: 4),
+                      child: Column(
+                        children: [
+                          Text(
+                            "Scene ${index+1}",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          Image.network("https://ubaya.xyz/flutter/160422041/"+_pm?.scenes?[index]),
+                          SizedBox(height: 10),
+                          ElevatedButton(
+                            onPressed: () {
+                              deleteScene(_pm?.scenes?[index]);
+                            },
+                            child: Text("DELETE"),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red, // background
+                              foregroundColor: Colors.white, // foreground
+                            ),
+                          )
+                        ],
+                      )
+                    )
+                  );
+                }
+              )
+            ),
 
           SizedBox(height: 10),
 

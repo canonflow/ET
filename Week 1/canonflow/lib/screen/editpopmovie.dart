@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:canonflow/class/genre.dart';
 import 'package:canonflow/class/popmovie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 
 class EditPopMovie extends StatefulWidget {
   int movieID;
@@ -28,6 +30,8 @@ class EditPopMovieState extends State<EditPopMovie> {
 
   PopMovie? _pm;
   Widget comboGenre = Text('tambah genre');
+
+  Uint8List? _imageBytes;
 
   Future<String> fetchData() async {
     final response = await http
@@ -193,6 +197,93 @@ class EditPopMovieState extends State<EditPopMovie> {
         if (!mounted) return;
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('Sukses mengubah Data')));
+      }
+    } else {
+      throw Exception('Failed to read API');
+    }
+  }
+
+  void _showPicker(context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return SafeArea(
+            child: Container(
+              color: Colors.white,
+              child: Wrap(
+                children: <Widget>[
+                  ListTile(
+                      tileColor: Colors.white,
+                      leading: const Icon(Icons.photo_library),
+                      title: const Text('Galeri'),
+                      onTap: () {
+                        imgGaleri();
+                        Navigator.of(context).pop();
+                      }
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.photo_camera),
+                    title: const Text('Kamera'),
+                    onTap: () {
+                      imgKamera();
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  imgGaleri() async {
+    final picker = ImagePicker();
+    final image = await picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 50,
+        maxHeight: 600,
+        maxWidth: 600);
+    if (image != null) {
+      final bytes = await image.readAsBytes();
+      setState(() {
+        _imageBytes = bytes;
+      });
+    }
+  }
+
+  imgKamera() async {
+    final picker = ImagePicker();
+    final image =
+    await picker.pickImage(
+        source: ImageSource.camera,
+        imageQuality: 20);
+    if (image != null) {
+      final bytes = await image.readAsBytes();
+      setState(() {
+        _imageBytes = bytes;
+      });
+    }
+  }
+
+  void uploadScene64() async {
+    String base64Image = base64Encode(_imageBytes!);
+    final response = await http.post(
+      Uri.parse("https://ubaya.xyz/flutter/160422041/uploadscene64.php"),
+      body: {
+        'movie_id': widget.movieID.toString(),
+        'image': base64Image,
+      },
+    );
+    if (response.statusCode == 200) {
+      Map json = jsonDecode(response.body);
+      print(json.toString());
+      if (json['result'] == 'success') {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Sukses mengupload Scene')));
+        setState(() {
+          bacaData();
+        });
       }
     } else {
       throw Exception('Failed to read API');
@@ -386,6 +477,35 @@ class EditPopMovieState extends State<EditPopMovie> {
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
                   child: comboGenre
                 ),
+
+                const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16.0),
+                    child: Text("Scenes")),
+
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      _showPicker(context);
+                    },
+                    child: const Text('Pick Scene'),
+                  ),
+                ),
+
+                if(_imageBytes!=null)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    child: Image.memory(_imageBytes!)
+                  ),
+
+                if(_imageBytes!=null)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    child: ElevatedButton(
+                      child: const Text("Upload"),
+                      onPressed: () => uploadScene64()
+                    )
+                  ),
 
                 ElevatedButton(
                   onPressed: () {

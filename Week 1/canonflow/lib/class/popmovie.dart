@@ -9,6 +9,7 @@ class PopMovie {
   String url;
   List? genres;
   List? casts;
+  List? scenes;
 
  PopMovie({
   required this.id, 
@@ -20,7 +21,8 @@ class PopMovie {
   this.casts,
   this.homepage,
   this.release_date,
-  this.runtime
+  this.runtime,
+  this.scenes
 });
 
  factory PopMovie.fromJson(Map<String, dynamic> json) {
@@ -34,7 +36,8 @@ class PopMovie {
    casts: json['casts'],
    homepage: json['homepage'],
    release_date: json['release_date'],
-   runtime: json['runtime'] as int
+   runtime: json['runtime'] as int,
+   scenes: json['scenes']
   );
  }
 }
