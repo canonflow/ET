@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:canonflow/class/cart.dart';
 import 'package:canonflow/class/popmovie.dart';
 import 'package:canonflow/screen/detailpop.dart';
 import 'package:flutter/material.dart';
@@ -39,6 +40,27 @@ String _temp = 'waiting API respond…';
 class _PopularMovieState extends State<PopularMovie> {
 
   List<PopMovie> PMs = [];
+  final dbHelper = DatabaseHelper.instance;
+
+  void addCart(movie_id, title) async {
+    Map<String, dynamic> row = {
+      'movie_id': movie_id,
+      'title': title,
+      'jumlah': 1
+    };
+
+    await dbHelper.addCart(row);
+
+    if (!mounted) return;
+
+    ScaffoldMessenger
+      .of(context)
+      .showSnackBar(
+        SnackBar(
+          content: Text('Sukses manambah barang')
+        )
+      );
+  }
 
   bacaData() {
     Future<String> data = fetchData();
@@ -168,6 +190,13 @@ class _PopularMovieState extends State<PopularMovie> {
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 4),
+                    ElevatedButton(
+                      onPressed: () {
+                        addCart(PMs[index].id, PMs[index].title);
+                      },
+                      child: Text("Add to cart")
+                    ),
+                    const SizedBox(height: 4),
                   ],
                 )
                 : ListTile(
@@ -183,7 +212,18 @@ class _PopularMovieState extends State<PopularMovie> {
                           ),
                         );
                       }),
-                    subtitle: Text(popMovs[index].overview),
+                    // subtitle: Text(popMovs[index].overview),
+                    subtitle: Column(
+                      children: [
+                        Text(PMs[index].overview),
+                        ElevatedButton(
+                          onPressed: () {
+                            addCart(PMs[index].id, PMs[index].title);
+                          },
+                          child: Text("Add to cart")
+                        )
+                      ]
+                    ),
                   ),
 
                 SizedBox(height: 8)

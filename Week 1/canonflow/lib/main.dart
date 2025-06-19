@@ -12,6 +12,7 @@ import 'package:canonflow/screen/quiz.dart';
 import 'package:canonflow/screen/search.dart';
 import 'package:canonflow/screen/student/addrecipe.dart';
 import 'package:canonflow/screen/student/student-list.dart';
+import 'package:canonflow/screen/view-cart.dart';
 import 'package:flutter/material.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -78,6 +79,7 @@ class MyApp extends StatelessWidget {
         'popular-movie': (context) => PopularMovie(),
         'popular-actor': (context) => PopularActor(),
         'popular-movie-add': (context) => NewPopMovie(),
+        'cart': (context) => ViewCart()
       },
     );
   }
@@ -365,6 +367,18 @@ class _MyHomePageState extends State<MyHomePage> {
             leading: const Icon(Icons.add),
             onTap: () {
               Navigator.pushNamed(context, "popular-movie-add");
+            },
+          ),
+          ListTile(
+            title: const Text(
+              "Cart",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            leading: const Icon(Icons.shopping_basket),
+            onTap: () {
+              Navigator.pushNamed(context, "cart");
             },
           ),
         ],
